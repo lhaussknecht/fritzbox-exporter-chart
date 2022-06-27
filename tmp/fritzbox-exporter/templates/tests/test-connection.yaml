@@ -1,0 +1,21 @@
+---
+# Source: fritzbox-exporter/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "ke-fritzbox-exporter-test-connection"
+  labels:
+    helm.sh/chart: fritzbox-exporter-0.1.0
+    app.kubernetes.io/name: fritzbox-exporter
+    app.kubernetes.io/instance: ke
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['ke-fritzbox-exporter:80']
+  restartPolicy: Never

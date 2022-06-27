@@ -1,0 +1,56 @@
+---
+# Source: fritzbox-exporter/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ke-fritzbox-exporter
+  labels:
+    helm.sh/chart: fritzbox-exporter-0.1.0
+    app.kubernetes.io/name: fritzbox-exporter
+    app.kubernetes.io/instance: ke
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fritzbox-exporter
+      app.kubernetes.io/instance: ke
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "9133"
+        prometheus.io/scrape: "true"
+      labels:
+        app.kubernetes.io/name: fritzbox-exporter
+        app.kubernetes.io/instance: ke
+    spec:
+      serviceAccountName: ke-fritzbox-exporter
+      securityContext:
+        {}
+      containers:
+        - name: fritzbox-exporter
+          env: 
+          - name: FRITZ_BOX_EXPORTER_FRITZ_BOX_USERNAME
+            value: changeme
+          - name: FRITZ_BOX_EXPORTER_FRITZ_BOX_PASSWORD
+            value: changeme
+          securityContext:
+            {}
+          image: "mxschmitt/fritzbox_exporter:latest-arm64v8"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {}
+          mounts:
